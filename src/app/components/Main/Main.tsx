@@ -12,6 +12,12 @@ export const Main = () => {
   const [tasksDone, setTasksDone] = useState(0)
 
   const handleAddTask = (taskValue: string) => {
+    const existingTaskIndex = tasks.findIndex(task => task.description.toLowerCase() === taskValue.toLowerCase())
+
+    if(existingTaskIndex !== -1) {
+      return;
+    }
+
     const newTask: TaskProps = {
       id: uuidv4(),
       isChecked: false,
@@ -55,7 +61,7 @@ export const Main = () => {
           type="text" 
           placeholder="Adicione uma nova tarefa..."
           onChange={handleNewTaskOnChange}
-          className="outline-none p-4 flex-1 bg-gray-500 placeholder:text-gray-300 rounded-lg text-gray-100 focus:outline-purple-200 hover:outline-purple-200 duration-200"
+          className={'outline-none p-4 flex-1 bg-gray-500 placeholder:text-gray-300 rounded-lg text-gray-100 focus:outline-purple-200 hover:outline-purple-200 duration-200'}
         />
         <button 
           className="flex items-center justify-center gap-2 bg-blue-300 text-gray-100 p-4 rounded-lg font-bold text-sm hover:bg-blue-200 duration-200 disabled:cursor-not-allowed disabled:opacity-70" 
@@ -88,7 +94,10 @@ export const Main = () => {
       { tasks.length === 0 ? <NoTasks />
         : (
           <section className="mt-6 w-1/2 gap-3 flex flex-col justify-center items-center">
-            {tasks.map((task: TaskProps) => {
+            {tasks.slice()
+                  .sort((a, b) => Number(b.isChecked) - Number(a.isChecked))
+                  .reverse()
+                  .map((task: TaskProps) => {
               return (
                 <MainContent 
                   taskList={tasks}
